@@ -1,5 +1,10 @@
 import React from 'react';
-import { Card, Col, Row, Statistic } from 'antd';
+import {
+  AppstoreOutlined,
+  CheckCircleOutlined,
+  ExclamationCircleOutlined,
+  StopOutlined,
+} from '@ant-design/icons';
 import type { QDIIFund } from '../../../shared/types';
 import { PurchaseStatus } from '../../../shared/types';
 
@@ -14,44 +19,27 @@ const StatsOverview: React.FC<Props> = ({ funds, loading }) => {
   const restricted = funds.filter((f) => f.purchaseStatus === PurchaseStatus.RESTRICTED).length;
   const suspended = funds.filter((f) => f.purchaseStatus === PurchaseStatus.SUSPENDED).length;
 
+  const items = [
+    { label: 'QDII 基金总数', value: total, icon: <AppstoreOutlined />, theme: 'brand' as const, color: 'var(--text-primary)' },
+    { label: '正常申购', value: open, icon: <CheckCircleOutlined />, theme: 'green' as const, color: 'var(--green)' },
+    { label: '限制大额', value: restricted, icon: <ExclamationCircleOutlined />, theme: 'orange' as const, color: 'var(--orange)' },
+    { label: '暂停申购', value: suspended, icon: <StopOutlined />, theme: 'red' as const, color: 'var(--red)' },
+  ];
+
   return (
-    <Row gutter={16} style={{ marginBottom: 16 }}>
-      <Col span={6}>
-        <Card size="small">
-          <Statistic title="QDII基金总数" value={total} loading={loading} />
-        </Card>
-      </Col>
-      <Col span={6}>
-        <Card size="small">
-          <Statistic
-            title="正常申购"
-            value={open}
-            loading={loading}
-            valueStyle={{ color: '#3f8600' }}
-          />
-        </Card>
-      </Col>
-      <Col span={6}>
-        <Card size="small">
-          <Statistic
-            title="限制大额"
-            value={restricted}
-            loading={loading}
-            valueStyle={{ color: '#faad14' }}
-          />
-        </Card>
-      </Col>
-      <Col span={6}>
-        <Card size="small">
-          <Statistic
-            title="暂停申购"
-            value={suspended}
-            loading={loading}
-            valueStyle={{ color: '#cf1322' }}
-          />
-        </Card>
-      </Col>
-    </Row>
+    <div className="stats-row">
+      {items.map((item) => (
+        <div key={item.label} className="stat-card">
+          <div className={`stat-icon ${item.theme}`}>{item.icon}</div>
+          <div className="stat-info">
+            <div className="stat-label">{item.label}</div>
+            <div className="stat-value" style={{ color: item.color }}>
+              {loading ? '--' : item.value}
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
   );
 };
 

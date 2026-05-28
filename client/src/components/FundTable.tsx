@@ -80,7 +80,7 @@ const baseColumns: ColumnsType<QDIIFund> = [
       return va - vb;
     },
     render: (val, record) => {
-      if (record.purchaseStatus === '开放申购') return <span style={{ color: '#999' }}>无限制</span>;
+      if (record.purchaseStatus === '开放申购') return <span style={{ color: 'var(--text-muted)' }}>无限制</span>;
       return val || '-';
     },
   },
@@ -130,13 +130,13 @@ const baseColumns: ColumnsType<QDIIFund> = [
     title: '投资区域',
     dataIndex: 'region',
     width: 90,
-    render: (val) => <Tag>{val}</Tag>,
+    render: (val) => <Tag style={{ borderRadius: 4, border: '1px solid var(--border)', color: 'var(--text-secondary)', background: 'var(--bg-surface)' }}>{val}</Tag>,
   },
   {
     title: '资产类型',
     dataIndex: 'assetType',
     width: 90,
-    render: (val) => <Tag color="blue">{val}</Tag>,
+    render: (val) => <Tag style={{ borderRadius: 4, border: '1px solid var(--brand-light)', color: 'var(--brand)', background: 'var(--brand-bg)' }}>{val}</Tag>,
   },
   {
     title: '手续费',
@@ -147,28 +147,33 @@ const baseColumns: ColumnsType<QDIIFund> = [
 ];
 
 function renderHoldings(holdings: StockHolding[]) {
-  if (!holdings || holdings.length === 0) return <span style={{ color: '#999' }}>暂无持仓数据</span>;
+  if (!holdings || holdings.length === 0) return <span style={{ color: 'var(--text-muted)', fontSize: 13 }}>暂无持仓数据</span>;
   return (
-    <table style={{ width: '100%', maxWidth: 500, borderCollapse: 'collapse', fontSize: 13 }}>
-      <thead>
-        <tr style={{ borderBottom: '1px solid #f0f0f0' }}>
-          <th style={{ textAlign: 'left', padding: '4px 8px' }}>排名</th>
-          <th style={{ textAlign: 'left', padding: '4px 8px' }}>代码</th>
-          <th style={{ textAlign: 'left', padding: '4px 8px' }}>名称</th>
-          <th style={{ textAlign: 'right', padding: '4px 8px' }}>占净值比</th>
-        </tr>
-      </thead>
-      <tbody>
+    <div style={{ padding: '4px 0' }}>
+      <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-dim)', marginBottom: 8, textTransform: 'uppercase', letterSpacing: 0.5 }}>前十大持仓</div>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
         {holdings.map((h, i) => (
-          <tr key={h.stockCode} style={{ borderBottom: '1px solid #f9f9f9' }}>
-            <td style={{ padding: '3px 8px' }}>{i + 1}</td>
-            <td style={{ padding: '3px 8px', fontFamily: 'monospace' }}>{h.stockCode}</td>
-            <td style={{ padding: '3px 8px' }}>{h.stockName}</td>
-            <td style={{ padding: '3px 8px', textAlign: 'right', fontWeight: 500 }}>{h.percentage.toFixed(2)}%</td>
-          </tr>
+          <div
+            key={h.stockCode}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+              padding: '6px 12px',
+              borderRadius: 8,
+              border: '1px solid var(--border-light)',
+              background: 'var(--bg-card)',
+              fontSize: 13,
+            }}
+          >
+            <span style={{ color: 'var(--text-muted)', fontSize: 11, fontWeight: 600, minWidth: 16 }}>{i + 1}</span>
+            <span style={{ fontFamily: 'var(--font-mono)', color: 'var(--text-dim)', fontSize: 12 }}>{h.stockCode}</span>
+            <span style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{h.stockName}</span>
+            <span style={{ color: 'var(--brand)', fontWeight: 700, fontSize: 12, marginLeft: 'auto' }}>{h.percentage.toFixed(2)}%</span>
+          </div>
         ))}
-      </tbody>
-    </table>
+      </div>
+    </div>
   );
 }
 
@@ -192,7 +197,7 @@ const FundTable: React.FC<Props> = ({ funds, loading, selectedHoldingStock }) =>
       render: (_, record) => {
         const pct = getHoldingPercentage(record, selectedHoldingStock.code);
         if (pct === null) return '-';
-        return <span style={{ fontWeight: 500, color: '#1677ff' }}>{pct.toFixed(2)}%</span>;
+        return <span style={{ fontWeight: 600, color: 'var(--brand)' }}>{pct.toFixed(2)}%</span>;
       },
     };
 
@@ -207,7 +212,7 @@ const FundTable: React.FC<Props> = ({ funds, loading, selectedHoldingStock }) =>
         dataSource={funds}
         rowKey="code"
         loading={loading}
-        pagination={{ pageSize: 50, showSizeChanger: true, showTotal: (total) => `共 ${total} 只基金` }}
+        pagination={{ pageSize: 50, showSizeChanger: true, showTotal: (total) => `共 ${total} 只基金`, style: { padding: '0 16px' } }}
         scroll={{ x: selectedHoldingStock ? 1510 : 1400 }}
         size="small"
         expandable={{
