@@ -367,6 +367,7 @@ body {
   letter-spacing: 0.5px !important;
   border-bottom: 1px solid var(--border) !important;
   padding: 12px 16px !important;
+  white-space: nowrap !important;
 }
 
 .ant-table-tbody > tr > td {

@@ -87,14 +87,14 @@ const baseColumns: ColumnsType<QDIIFund> = [
   {
     title: '最新净值',
     dataIndex: 'nav',
-    width: 90,
+    width: 100,
     sorter: numSorter('nav'),
     render: (val) => (val !== null ? val.toFixed(4) : '-'),
   },
   {
     title: '日涨跌',
     dataIndex: 'dailyChange',
-    width: 80,
+    width: 90,
     sorter: numSorter('dailyChange'),
     render: renderChange,
   },
