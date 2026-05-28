@@ -13,7 +13,7 @@ interface Props {
 function renderChange(val: number | null) {
   if (val === null || val === undefined) return '-';
   const className = val > 0 ? 'change-positive' : val < 0 ? 'change-negative' : '';
-  return <span className={className}>{val > 0 ? '+' : ''}{val.toFixed(2)}%</span>;
+  return <span className={className} style={{ whiteSpace: 'nowrap' }}>{val > 0 ? '+' : ''}{val.toFixed(2)}%</span>;
 }
 
 function numSorter(key: keyof QDIIFund) {

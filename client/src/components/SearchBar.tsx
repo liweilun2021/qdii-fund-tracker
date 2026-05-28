@@ -1,5 +1,6 @@
 import React from 'react';
 import { Input } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
 import type { Filters } from '../hooks/useFunds';
 
 interface Props {
@@ -9,13 +10,14 @@ interface Props {
 
 const SearchBar: React.FC<Props> = ({ value, updateFilter }) => {
   return (
-    <Input.Search
+    <Input
       placeholder="搜索基金代码或名称"
       allowClear
       size="large"
       value={value}
+      suffix={<SearchOutlined style={{ color: 'var(--text-muted)' }} />}
       onChange={(e) => updateFilter({ search: e.target.value || undefined })}
-      style={{ width: 400 }}
+      style={{ width: 320 }}
     />
   );
 };

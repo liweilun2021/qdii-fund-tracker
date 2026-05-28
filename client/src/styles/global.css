@@ -450,6 +450,11 @@ body {
   padding: 2px 8px !important;
 }
 
+/* --- AutoComplete: make inner Input fill the selector height --- */
+.ant-select-auto-complete .ant-input-affix-wrapper {
+  height: 100% !important;
+}
+
 /* --- Select / AutoComplete dropdown --- */
 .ant-select-dropdown {
   border-radius: var(--radius) !important;
