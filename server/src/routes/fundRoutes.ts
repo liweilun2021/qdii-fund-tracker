@@ -30,7 +30,7 @@ router.get('/funds', async (req: Request, res: Response) => {
       const kw = (holdingStock as string).toUpperCase();
       filtered = filtered.filter((f) =>
         f.holdings.some(
-          (h) => h.stockCode.toUpperCase().includes(kw) || h.stockName.includes(holdingStock as string),
+          (h) => h.stockCode.toUpperCase() === kw,
         ),
       );
     }
