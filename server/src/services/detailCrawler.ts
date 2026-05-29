@@ -2,7 +2,6 @@ import axios from 'axios';
 import pLimit from 'p-limit';
 import { config } from '../config';
 import { extractFundDetail } from '../utils/htmlParser';
-import { updateFundInCache } from './cacheService';
 import { QDIIFund } from '../../../shared/types';
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
@@ -29,10 +28,13 @@ async function fetchFundDetail(code: string): Promise<ReturnType<typeof extractF
   return null;
 }
 
-export async function enrichFundDetails(funds: QDIIFund[]): Promise<void> {
+/** Returns a Set of fund codes that were successfully enriched */
+export async function enrichFundDetails(funds: QDIIFund[]): Promise<Set<string>> {
   console.log(`[detailCrawler] Enriching ${funds.length} funds with purchase status...`);
   const limit = pLimit(config.crawl.detailConcurrency);
   let completed = 0;
+  let failed = 0;
+  const enriched = new Set<string>();
 
   const tasks = funds.map((fund) =>
     limit(async () => {
@@ -41,11 +43,9 @@ export async function enrichFundDetails(funds: QDIIFund[]): Promise<void> {
         fund.purchaseStatus = detail.purchaseStatus;
         fund.purchaseLimit = detail.purchaseLimit;
         fund.redemptionStatus = detail.redemptionStatus;
-        updateFundInCache(fund.code, {
-          purchaseStatus: detail.purchaseStatus,
-          purchaseLimit: detail.purchaseLimit,
-          redemptionStatus: detail.redemptionStatus,
-        });
+        enriched.add(fund.code);
+      } else {
+        failed++;
       }
       completed++;
       if (completed % 20 === 0) {
@@ -56,5 +56,6 @@ export async function enrichFundDetails(funds: QDIIFund[]): Promise<void> {
   );
 
   await Promise.allSettled(tasks);
-  console.log(`[detailCrawler] Enrichment complete (${completed}/${funds.length})`);
+  console.log(`[detailCrawler] Enrichment complete (${completed}/${funds.length}, ${failed} failed)`);
+  return enriched;
 }

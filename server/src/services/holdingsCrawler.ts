@@ -2,7 +2,6 @@ import axios from 'axios';
 import pLimit from 'p-limit';
 import { config } from '../config';
 import { parseHoldingsHtml } from '../utils/holdingsParser';
-import { updateFundInCache } from './cacheService';
 import { QDIIFund } from '../../../shared/types';
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
@@ -27,7 +26,7 @@ async function fetchFundHoldings(code: string): Promise<ReturnType<typeof parseH
       if (attempt === 0) await sleep(1000);
     }
   }
-  return [];
+  return { holdings: [], reportDate: '' };
 }
 
 export async function enrichFundHoldings(funds: QDIIFund[]): Promise<void> {
@@ -37,9 +36,9 @@ export async function enrichFundHoldings(funds: QDIIFund[]): Promise<void> {
 
   const tasks = funds.map((fund) =>
     limit(async () => {
-      const holdings = await fetchFundHoldings(fund.code);
+      const { holdings, reportDate } = await fetchFundHoldings(fund.code);
       fund.holdings = holdings;
-      updateFundInCache(fund.code, { holdings });
+      fund.holdingsDate = reportDate;
       completed++;
       if (completed % 50 === 0) {
         console.log(`[holdingsCrawler] Progress: ${completed}/${funds.length}`);

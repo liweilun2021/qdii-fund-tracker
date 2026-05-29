@@ -35,6 +35,12 @@ export enum AssetType {
   OTHER = '其他',
 }
 
+/** 持仓解析结果 */
+export interface HoldingsResult {
+  holdings: StockHolding[];
+  reportDate: string;
+}
+
 /** 持仓股票 */
 export interface StockHolding {
   stockCode: string;
@@ -69,6 +75,7 @@ export interface QDIIFund {
   assetType: AssetType;
 
   holdings: StockHolding[];
+  holdingsDate: string;
 }
 
 /** 基金列表 API 响应 */

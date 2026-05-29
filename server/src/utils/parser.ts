@@ -64,6 +64,7 @@ export function parseRankResponse(responseText: string): QDIIFund[] {
       assetType: classifyAssetType(name),
 
       holdings: [],
+      holdingsDate: '',
     };
 
     funds.push(fund);

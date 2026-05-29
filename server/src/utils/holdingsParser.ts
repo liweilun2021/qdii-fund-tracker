@@ -1,18 +1,24 @@
-import { StockHolding } from '../../../shared/types';
+import { StockHolding, HoldingsResult } from '../../../shared/types';
 
-export function parseHoldingsHtml(html: string): StockHolding[] {
+export function parseHoldingsHtml(html: string): HoldingsResult {
+  const empty: HoldingsResult = { holdings: [], reportDate: '' };
+
   // Response format: var apidata={ content:"<div>...</div>",arryear:[...],curyear:N};
   // Extract the content value — greedy match up to the last quote before ,arryear
   const contentMatch = html.match(/content:"([\s\S]*)"\s*,\s*arryear/);
-  if (!contentMatch) return [];
+  if (!contentMatch) return empty;
 
   const content = contentMatch[1];
-  if (!content || content.length < 10) return [];
+  if (!content || content.length < 10) return empty;
 
   // Only parse first quarter table (split by boxitem, take first)
   const tables = content.split('boxitem');
-  if (tables.length < 2) return [];
+  if (tables.length < 2) return empty;
   const firstTable = tables[1];
+
+  // Extract report date: 截止至：<font class='px12'>2026-03-31</font>
+  const dateMatch = firstTable.match(/截止至：<font[^>]*>(\d{4}-\d{2}-\d{2})<\/font>/);
+  const reportDate = dateMatch ? dateMatch[1] : '';
 
   // Actual row format:
   // <tr><td>1</td><td class='toc'><a href='...' >NVDA</a></td>
@@ -31,5 +37,5 @@ export function parseHoldingsHtml(html: string): StockHolding[] {
     });
   }
 
-  return holdings;
+  return { holdings, reportDate };
 }

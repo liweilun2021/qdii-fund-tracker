@@ -65,15 +65,6 @@ export function setCachedFunds(funds: QDIIFund[]): void {
   writeToDisk();
 }
 
-export function updateFundInCache(code: string, updates: Partial<QDIIFund>): void {
-  if (!cache) return;
-  const fund = cache.data.find((f) => f.code === code);
-  if (fund) Object.assign(fund, updates);
-}
-
-export function persistCache(): void {
-  writeToDisk();
-}
 
 export function getCacheTimestamp(): string | null {
   return cache ? new Date(cache.timestamp).toISOString() : null;

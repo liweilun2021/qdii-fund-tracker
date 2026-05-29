@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Result, Tag } from 'antd';
+import { Button, Result, Tag, message } from 'antd';
 import { ReloadOutlined } from '@ant-design/icons';
 import { useFunds } from './hooks/useFunds';
 import StatsOverview from './components/StatsOverview';
@@ -13,10 +13,19 @@ const App: React.FC = () => {
   const { funds, categories, loading, error, lastUpdated, filters, updateFilter, retry } =
     useFunds();
   const [selectedHoldingStock, setSelectedHoldingStock] = useState<{ code: string; name: string } | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
 
   const handleRefresh = async () => {
-    await refreshData();
-    retry();
+    setRefreshing(true);
+    try {
+      await refreshData();
+      retry();
+      message.success('数据刷新完成');
+    } catch {
+      message.error('数据刷新失败，请稍后重试');
+    } finally {
+      setRefreshing(false);
+    }
   };
 
   const handleClearHolding = () => {
@@ -39,15 +48,6 @@ const App: React.FC = () => {
             <h1>QDII 基金限额查询</h1>
             <p>实时查询申购状态、限购金额、净值涨跌与持仓数据</p>
           </div>
-          <Button
-            type="primary"
-            icon={<ReloadOutlined />}
-            size="large"
-            onClick={handleRefresh}
-            loading={loading}
-          >
-            刷新数据
-          </Button>
         </div>
       </div>
 
@@ -103,9 +103,20 @@ const App: React.FC = () => {
 
         {lastUpdated && (
           <footer className="app-footer">
-            数据更新时间: {new Date(lastUpdated).toLocaleString('zh-CN')}
+            数据更新时间: {new Date(lastUpdated).toLocaleString('zh-CN')} · 净值与涨跌幅基于各基金最新净值日期
           </footer>
         )}
+      </div>
+
+      <div className="fab-refresh">
+        <Button
+          type="primary"
+          shape="circle"
+          icon={<ReloadOutlined spin={refreshing} />}
+          size="large"
+          onClick={handleRefresh}
+          disabled={refreshing}
+        />
       </div>
     </>
   );

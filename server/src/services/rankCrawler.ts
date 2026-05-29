@@ -160,6 +160,7 @@ export async function fetchQDIIFundList(): Promise<QDIIFund[]> {
               region: classifyRegion(entry.name),
               assetType: classifyAssetType(entry.name),
               holdings: [],
+              holdingsDate: '',
             };
             return fund;
           }),

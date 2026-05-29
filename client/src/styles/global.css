@@ -132,11 +132,6 @@ body {
   font-weight: 400;
 }
 
-.app-hero .ant-btn {
-  border-radius: var(--radius) !important;
-  font-weight: 500;
-}
-
 /* ===== Main Content ===== */
 .app-content {
   max-width: 1400px;
@@ -298,6 +293,27 @@ body {
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
   overflow: hidden;
+}
+
+/* ===== Floating Refresh Button ===== */
+.fab-refresh {
+  position: fixed;
+  right: 0;
+  bottom: 48px;
+  z-index: 100;
+  transform: translateX(50%);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fab-refresh:hover {
+  transform: translateX(0);
+}
+
+.fab-refresh .ant-btn {
+  width: 48px !important;
+  height: 48px !important;
+  font-size: 20px !important;
+  box-shadow: var(--shadow-lg), var(--shadow-brand) !important;
 }
 
 /* ===== Footer ===== */

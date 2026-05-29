@@ -89,7 +89,16 @@ const baseColumns: ColumnsType<QDIIFund> = [
     dataIndex: 'nav',
     width: 100,
     sorter: numSorter('nav'),
-    render: (val) => (val !== null ? val.toFixed(4) : '-'),
+    render: (val, record) => {
+      if (val === null) return '-';
+      const dateStr = record.navDate ? record.navDate.slice(5) : '';
+      return (
+        <div>
+          <div>{val.toFixed(4)}</div>
+          {dateStr && <div style={{ fontSize: 11, color: 'var(--text-muted)', lineHeight: 1 }}>{dateStr}</div>}
+        </div>
+      );
+    },
   },
   {
     title: '日涨跌',
@@ -146,11 +155,15 @@ const baseColumns: ColumnsType<QDIIFund> = [
   },
 ];
 
-function renderHoldings(holdings: StockHolding[]) {
+function renderHoldings(holdings: StockHolding[], holdingsDate?: string) {
   if (!holdings || holdings.length === 0) return <span style={{ color: 'var(--text-muted)', fontSize: 13 }}>暂无持仓数据</span>;
+  const dateLabel = holdingsDate ? `（截至 ${holdingsDate}）` : '';
   return (
     <div style={{ padding: '4px 0' }}>
-      <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-dim)', marginBottom: 8, textTransform: 'uppercase', letterSpacing: 0.5 }}>前十大持仓</div>
+      <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-dim)', marginBottom: 8, letterSpacing: 0.5 }}>
+        <span style={{ textTransform: 'uppercase' }}>前十大持仓</span>
+        {dateLabel && <span style={{ fontWeight: 400, color: 'var(--text-muted)', marginLeft: 4 }}>{dateLabel}</span>}
+      </div>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
         {holdings.map((h, i) => (
           <div
@@ -216,7 +229,7 @@ const FundTable: React.FC<Props> = ({ funds, loading, selectedHoldingStock }) =>
         scroll={{ x: selectedHoldingStock ? 1510 : 1400 }}
         size="small"
         expandable={{
-          expandedRowRender: (record) => renderHoldings(record.holdings),
+          expandedRowRender: (record) => renderHoldings(record.holdings, record.holdingsDate),
           rowExpandable: (record) => record.holdings && record.holdings.length > 0,
         }}
       />
